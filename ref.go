@@ -81,16 +81,13 @@ func getMatchingFilesRecursively( path string, from string ) ( files_and_dirs []
 		//skip hidden files
 		if  w_path[0] != '.'  {
 
-			if strings.Contains( w_fi.Name(), from ) == true {
+			if mode.IsDir() == false {
 
-
-				if mode.IsDir() == false {
-
-					files_only = append ( files_only, w_path )
-				}
-
-				files_and_dirs = append ( files_and_dirs, w_path )
+				files_only = append ( files_only, w_path )
 			}
+
+			files_and_dirs = append ( files_and_dirs, w_path )
+
 		} else {
 
 			if mode.IsDir() == true && w_path != "." && w_path != ".." {
