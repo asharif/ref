@@ -77,12 +77,12 @@ func getMatchingFilesRecursively( path string, from string ) ( files_and_dirs []
 
 	walk_func := func ( w_path string, w_fi os.FileInfo, w_err error ) error {
 
+		mode := w_fi.Mode()
 		//skip hidden files
-		if  w_fi.Name()[0] != '.'  {
+		if  w_path[0] != '.'  {
 
 			if strings.Contains( w_fi.Name(), from ) == true {
 
-				mode := w_fi.Mode()
 
 				if mode.IsDir() == false {
 
@@ -90,6 +90,13 @@ func getMatchingFilesRecursively( path string, from string ) ( files_and_dirs []
 				}
 
 				files_and_dirs = append ( files_and_dirs, w_path )
+			}
+		} else {
+
+			if mode.IsDir() == true && w_path != "." && w_path != ".." {
+
+				fmt.Printf("Hidded directory skipped: %s \n", w_path)
+				return filepath.SkipDir
 			}
 		}
 
