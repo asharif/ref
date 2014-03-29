@@ -306,7 +306,7 @@ func printHelp() {
 	fmt.Printf( "\t-f\t(required) - The substring to be refactored.\n" )
 	fmt.Printf( "\t-t\t(required) - The substring to refactor to.\n" )
 	fmt.Printf( "\t-d\t(optional) - The root directory to recurse and refactor.  Default is '.'\n\n" )
-	fmt.Printf( "\tq\t(optional) - Quiet mode.  Do not confirm each step.  Default is false.\n\n" )
-	fmt.Printf( "\tskf\t(optional) - Skip files.  Only refactor contents.  Default is false.\n\n" )
-	fmt.Printf( "\tskc\t(optional) - Skip content.  Only refactor files.  Default is false.\n\n" )
+	fmt.Printf( "\t-q\t(optional) - Quiet mode.  Do not confirm each step.  Default is false.\n\n" )
+	fmt.Printf( "\t-skf\t(optional) - Skip files.  Only refactor contents.  Default is false.\n\n" )
+	fmt.Printf( "\t-skc\t(optional) - Skip content.  Only refactor files.  Default is false.\n\n" )
 }
