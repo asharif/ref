@@ -29,8 +29,10 @@ func main() {
 	to := flag.String( "t", "", "(required) - The string pattern to refactor to." )
 	ref_dir := flag.String( "d", ".", "(optional ) - The root directory to recurse and refactor.  Default is '.' " )
 	quiet := flag.Bool( "q", false, "(optional) - Quiet mode.  Do not confirm each step.  Default is false." )
-	skip_files := flag.Bool( "skf", false, "(optional) - Skip files.  Only refactor contents.  Default is false." )
-	skip_content := flag.Bool( "skc", false, "(optional) - Skip content.  Only refactor files.  Default is false." )
+	skip_files := flag.Bool( "sf", false, "(optional) - Skip files.  Only refactor contents.  Default is false." )
+	skip_content := flag.Bool( "sc", false, "(optional) - Skip content.  Only refactor files.  Default is false." )
+	file_ext := flag.String( "e", "", "(optional) - Limit refactor to file extention." )
+
 	flag.Parse()
 
 	if *from == "" || *to == "" {
@@ -40,7 +42,7 @@ func main() {
 	}
 
 
-	files_and_dirs, files_only := getMatchingFilesRecursively( *ref_dir, *from )
+	files_and_dirs, files_only := getMatchingFilesRecursively( *ref_dir, *from, *file_ext )
 
 	fmt.Printf("%d Total files found...\n", len( files_only ) )
 	fmt.Printf("%d Total files and directories found...\n\n", len( files_and_dirs ) )
@@ -50,7 +52,7 @@ func main() {
 	}
 
 	if *skip_files == false {
-		renameFiles( files_and_dirs, *from, *to, *quiet )
+		renameFiles( files_and_dirs, *from, *to, *quiet, *file_ext )
 	}
 
 	if *skip_files == true && *skip_content == true {
@@ -60,7 +62,7 @@ func main() {
 }
 
 
-func getMatchingFilesRecursively( path string, from string ) ( files_and_dirs []string, files_only []string ) {
+func getMatchingFilesRecursively( path string, from string, ext string ) ( files_and_dirs []string, files_only []string ) {
 
 
 	fmt.Printf("Checking if directory '%s' exists...\n", path )
@@ -79,11 +81,15 @@ func getMatchingFilesRecursively( path string, from string ) ( files_and_dirs []
 
 		mode := w_fi.Mode()
 		//skip hidden files
-		if  w_path[0] != '.'  {
+		if  w_fi.Name()[0] != '.'  {
 
 			if mode.IsDir() == false {
 
-				files_only = append ( files_only, w_path )
+				//only get the files that match extention if provided
+				if ext == "" || filepath.Ext( w_path ) ==  ext {
+
+					files_only = append ( files_only, w_path )
+				}
 			}
 
 			files_and_dirs = append ( files_and_dirs, w_path )
@@ -178,16 +184,18 @@ func renameInFiles( files []string, from string, to string, quiet bool ) {
 
 }
 
-func renameFiles(files []string, from string, to string, quiet bool ) {
+func renameFiles(files []string, from string, to string, quiet bool, ext string ) {
 
 	fmt.Printf( "Checking files and directory names...\n\n" )
 
 	for _, orig_file_name := range files {
 
-		file_dir := filepath.Dir(orig_file_name)
-		file_base := filepath.Base(orig_file_name)
+		file_dir := filepath.Dir( orig_file_name )
+		file_base := filepath.Base( orig_file_name )
+		file_ext := filepath.Ext( orig_file_name )
 
-		if strings.Contains( file_base, from ) == true {
+		if strings.Contains( file_base, from ) == true && 
+		   (ext == "" || ext == file_ext) {
 
 			to_base := strings.Replace( file_base, from, to, -1 )
 			refactored_file_name := file_dir + "/" + to_base
@@ -249,7 +257,8 @@ func getFileLinesIfNotBinary ( file string ) ( lines []string, is_binary bool ) 
 
 		for _, char := range line {
 
-			if  char < 32 || char > 126  {
+			if  (char < 32 || char > 126) && char != 9 &&
+				char != 8220 && char != 8217 && char != 8221 && char != 65306  {
 
 				return nil, true
 			}
@@ -314,6 +323,7 @@ func printHelp() {
 	fmt.Printf( "\t-t\t(required) - The substring to refactor to.\n" )
 	fmt.Printf( "\t-d\t(optional) - The root directory to recurse and refactor.  Default is '.'\n\n" )
 	fmt.Printf( "\t-q\t(optional) - Quiet mode.  Do not confirm each step.  Default is false.\n\n" )
-	fmt.Printf( "\t-skf\t(optional) - Skip files.  Only refactor contents.  Default is false.\n\n" )
-	fmt.Printf( "\t-skc\t(optional) - Skip content.  Only refactor files.  Default is false.\n\n" )
+	fmt.Printf( "\t-sf\t(optional) - Skip files.  Only refactor contents.  Default is false.\n\n" )
+	fmt.Printf( "\t-sc\t(optional) - Skip content.  Only refactor files.  Default is false.\n\n" )
+	fmt.Printf( "\t-e\t(optional) - Limit refactor to file extention. (example: .java)" )
 }
