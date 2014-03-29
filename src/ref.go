@@ -318,12 +318,12 @@ func writeLinesToFile(file string, lines []string) {
 
 func printHelp() {
 
-	fmt.Printf( "\nRefactor - CLI refactor tool.\nVersion: 1.0\nAuthor: Arash Sharif\nLicense: MIT\n\n")
+	fmt.Printf( "Refactor - CLI refactor tool.\nVersion: 1.0\nAuthor: Arash Sharif\nLicense: MIT\n\n")
 	fmt.Printf( "\t-f\t(required) - The substring to be refactored.\n" )
 	fmt.Printf( "\t-t\t(required) - The substring to refactor to.\n" )
-	fmt.Printf( "\t-d\t(optional) - The root directory to recurse and refactor.  Default is '.'\n\n" )
-	fmt.Printf( "\t-q\t(optional) - Quiet mode.  Do not confirm each step.  Default is false.\n\n" )
-	fmt.Printf( "\t-sf\t(optional) - Skip files.  Only refactor contents.  Default is false.\n\n" )
-	fmt.Printf( "\t-sc\t(optional) - Skip content.  Only refactor files.  Default is false.\n\n" )
-	fmt.Printf( "\t-e\t(optional) - Limit refactor to file extention. (example: .java)" )
+	fmt.Printf( "\t-d\t(optional) - The root directory to recurse and refactor.  Default is '.'\n" )
+	fmt.Printf( "\t-q\t(optional) - Quiet mode.  Do not confirm each step.  Default is false.\n" )
+	fmt.Printf( "\t-sf\t(optional) - Skip files.  Only refactor contents.  Default is false.\n" )
+	fmt.Printf( "\t-sc\t(optional) - Skip content.  Only refactor files.  Default is false.\n" )
+	fmt.Printf( "\t-e\t(optional) - Limit refactor to file extention. (example: .java)\n\n" )
 }
