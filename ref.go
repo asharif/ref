@@ -187,39 +187,42 @@ func renameFiles(files []string, from string, to string, quiet bool ) {
 		file_dir := filepath.Dir(orig_file_name)
 		file_base := filepath.Base(orig_file_name)
 
-		to_base := strings.Replace( file_base, from, to, -1 )
-		refactored_file_name := file_dir + "/" + to_base
-		colored_refactored_file_name := file_dir + "/" + CLR_G + to_base + CLR_N
+		if strings.Contains( file_base, from ) == true {
 
-		if quiet == false {
+			to_base := strings.Replace( file_base, from, to, -1 )
+			refactored_file_name := file_dir + "/" + to_base
+			colored_refactored_file_name := file_dir + "/" + CLR_G + to_base + CLR_N
 
-			colored_orig_file_name := file_dir + "/" + CLR_R + file_base + CLR_N
+			if quiet == false {
 
-			var confirm string
-			fmt.Printf("Rename '%s' to '%s'?(y/n) ", colored_orig_file_name, colored_refactored_file_name )
-			_, err := fmt.Scanf("%s", &confirm)
+				colored_orig_file_name := file_dir + "/" + CLR_R + file_base + CLR_N
 
-			if  err != nil  {
+				var confirm string
+				fmt.Printf("Rename '%s' to '%s'?(y/n) ", colored_orig_file_name, colored_refactored_file_name )
+				_, err := fmt.Scanf("%s", &confirm)
 
-				log.Fatal( err )
-			}
-			if confirm[0] == 'y'  {
+				if  err != nil  {
 
-				fmt.Printf("Refactoring file...\n\n" )
+					log.Fatal( err )
+				}
+				if confirm[0] == 'y'  {
+
+					fmt.Printf("Refactoring file...\n\n" )
+					os.Rename(orig_file_name, refactored_file_name)
+					refactorFileAndDirArray( &files, orig_file_name, refactored_file_name )
+
+				} else {
+					fmt.Printf("Skipping refactor for file...\n\n" )
+				}
+
+			} else {
+
+
+				fmt.Printf("Refactoring file '%s'...\n\n", orig_file_name )
 				os.Rename(orig_file_name, refactored_file_name)
 				refactorFileAndDirArray( &files, orig_file_name, refactored_file_name )
 
-			} else {
-				fmt.Printf("Skipping refactor for file...\n\n" )
 			}
-
-		} else {
-
-
-			fmt.Printf("Refactoring file '%s'...\n\n", orig_file_name )
-			os.Rename(orig_file_name, refactored_file_name)
-			refactorFileAndDirArray( &files, orig_file_name, refactored_file_name )
-
 		}
 
 
