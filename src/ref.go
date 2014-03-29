@@ -309,7 +309,7 @@ func writeLinesToFile(file string, lines []string) {
 	defer w.Flush()
 
 	for _, line := range lines {
-		_, err := w.WriteString(line)
+		_, err := w.WriteString(line + "\n")
 		if err != nil {
 			log.Fatal(err)
 		}
