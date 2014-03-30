@@ -42,17 +42,19 @@ func main() {
 	}
 
 
-	files_and_dirs, files_only := getMatchingFilesRecursively( *ref_dir, *from, *file_ext )
+	dirs, files := getMatchingFilesRecursively( *ref_dir, *from, *file_ext )
 
-	fmt.Printf("%d Total files found...\n", len( files_only ) )
-	fmt.Printf("%d Total files and directories found...\n\n", len( files_and_dirs ) )
+	fmt.Printf("%d Total files found...\n", len( files ) )
+	fmt.Printf("%d Total directories found...\n\n", len( dirs ) )
 
 	if *skip_content == false {
-		renameInFiles( files_only, *from, *to, *quiet )
+		renameInFiles( files, *from, *to, *quiet )
 	}
 
 	if *skip_files == false {
-		renameFiles( files_and_dirs, *from, *to, *quiet, *file_ext )
+		//do files first before dirs to preserv paths!
+		renameFiles( files, *from, *to, *quiet, *file_ext )
+		renameFiles( dirs, *from, *to, *quiet, *file_ext )
 	}
 
 	if *skip_files == true && *skip_content == true {
@@ -62,7 +64,7 @@ func main() {
 }
 
 
-func getMatchingFilesRecursively( path string, from string, ext string ) ( files_and_dirs []string, files_only []string ) {
+func getMatchingFilesRecursively( path string, from string, ext string ) ( dirs []string, files []string ) {
 
 
 	fmt.Printf("Checking if directory '%s' exists...\n", path )
@@ -83,16 +85,17 @@ func getMatchingFilesRecursively( path string, from string, ext string ) ( files
 		//skip hidden files
 		if  w_fi.Name()[0] != '.'  {
 
-			if mode.IsDir() == false {
+			if mode.IsRegular() == true {
 
 				//only get the files that match extention if provided
 				if ext == "" || filepath.Ext( w_path ) ==  ext {
 
-					files_only = append ( files_only, w_path )
+					files = append ( files, w_path )
 				}
-			}
+			} else if mode.IsDir() == true {
 
-			files_and_dirs = append ( files_and_dirs, w_path )
+				dirs = append ( dirs, w_path )
+			}
 
 		} else {
 
@@ -113,7 +116,7 @@ func getMatchingFilesRecursively( path string, from string, ext string ) ( files
 		log.Fatal( err )
 	}
 
-	return files_and_dirs, files_only
+	return dirs, files
 }
 
 
@@ -217,7 +220,6 @@ func renameFiles(files []string, from string, to string, quiet bool, ext string 
 
 					fmt.Printf("Refactoring file...\n\n" )
 					os.Rename(orig_file_name, refactored_file_name)
-					refactorFileAndDirArray( &files, orig_file_name, refactored_file_name )
 
 				} else {
 					fmt.Printf("Skipping refactor for file...\n\n" )
@@ -228,7 +230,6 @@ func renameFiles(files []string, from string, to string, quiet bool, ext string 
 
 				fmt.Printf("Refactoring file '%s'...\n\n", orig_file_name )
 				os.Rename(orig_file_name, refactored_file_name)
-				refactorFileAndDirArray( &files, orig_file_name, refactored_file_name )
 
 			}
 		}
@@ -283,16 +284,6 @@ func printSuspectLine( line string, i int, from string, to string ) {
 	fmt.Printf("%s- %d.\t\t%s\n", CLR_R, i + 1, colored_from_line )
 	fmt.Printf("%s+ %d.\t\t%s\n", CLR_G, i + 1, colored_to_line )
 
-
-}
-
-func refactorFileAndDirArray( files * []string, orig_file_name string, refactored_file_name string ) {
-
-	for i, file := range (*files) {
-
-		(*files)[i] = strings.Replace( file, orig_file_name, refactored_file_name, 1 )
-
-	}
 
 }
 
