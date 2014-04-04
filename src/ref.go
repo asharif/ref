@@ -309,7 +309,7 @@ func writeLinesToFile(file string, lines []string) {
 
 func printHelp() {
 
-	fmt.Printf( "Refactor - CLI refactor tool.\nVersion: 1.0\nAuthor: Arash Sharif\nLicense: MIT\n\n")
+	fmt.Printf( "Usage: ref -f <from> -t <to> [options]\n\n")
 	fmt.Printf( "\t-f\t(required) - The substring to be refactored.\n" )
 	fmt.Printf( "\t-t\t(required) - The substring to refactor to.\n" )
 	fmt.Printf( "\t-d\t(optional) - The root directory to recurse and refactor.  Default is '.'\n" )

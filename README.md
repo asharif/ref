@@ -1,3 +1,5 @@
+ref - CLI refactor tool
+
 #Intro:
 
 1.  Download appropriate version under bin for platform
@@ -6,3 +8,6 @@
 
 #Demo:
 ![alt tag](ref_preview.gif)
+
+#License
+MIT
